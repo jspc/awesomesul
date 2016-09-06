@@ -19,9 +19,9 @@ func init() {
     flag.Parse()
 
     myRedis = redis.NewClient(&redis.Options{
-        Addr:     "localhost:6379",
-        Password: "", // no password set
-        DB:       0,  // use default DB
+        Addr:     redisAddr,
+        Password: redisPassword,
+        DB:       redisDB,
     })
 
     log.Println("%T", myRedis)
