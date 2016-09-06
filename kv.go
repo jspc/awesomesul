@@ -27,8 +27,8 @@ func KV(method string, path string, body string) (string){
         o.Value = GetRedis(path)
     case "PUT":
         return PutRedis(path, body)
-    // case "DELETE":
-    //     return DelRedis(path)
+    case "DELETE":
+        return DelRedis(path)
     }
 
     if len(o.Value) == 0 {

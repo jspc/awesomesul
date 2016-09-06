@@ -14,3 +14,8 @@ func PutRedis(path string, value string) (string) {
     myRedis.Set(path, encValue, 0).Result()
     return "true"
 }
+
+func DelRedis(path string) (string) {
+    myRedis.Del(path).Result()
+    return "true"
+}
