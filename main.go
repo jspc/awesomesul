@@ -11,11 +11,13 @@ var myRedis *redis.Client
 var redisAddr string
 var redisPassword string
 var redisDB int
+var listenAddress string
 
 func init() {
-    flag.StringVar(&redisAddr, "address", "localhost:6379", "Redis host address")
-    flag.StringVar(&redisPassword, "password", "", "Redis password, should one exist")
+    flag.StringVar(&redisAddr, "redis_address", "localhost:6379", "Redis host address")
+    flag.StringVar(&redisPassword, "redis_password", "", "Redis password, should one exist")
     flag.IntVar(&redisDB, "db", 0, "Redis database number")
+    flag.StringVar(&listenAddress, "listen_address", ":8000", "Address on which to listen")
     flag.Parse()
 
     myRedis = redis.NewClient(&redis.Options{
@@ -36,5 +38,5 @@ func init() {
 
 func main(){
     http.HandleFunc("/", router)
-    http.ListenAndServe(":8000", nil)
+    http.ListenAndServe(listenAddress, nil)
 }
