@@ -2,7 +2,6 @@ package main
 
 import (
     "encoding/json"
-    "fmt"
 )
 
 type KVObj struct {
@@ -15,6 +14,7 @@ type KVObj struct {
 }
 
 func KV(method string, path string, body string) (string){
+    var response []KVObj
     var o KVObj
     o.CreateIndex = "100"
     o.ModifyIndex = "200"
@@ -35,6 +35,6 @@ func KV(method string, path string, body string) (string){
         return o.Value
     }
 
-    j, _ := json.Marshal(o)
-    return fmt.Sprintf("[%s]", string(j))
+    j, _ := json.Marshal( append(response, o) )
+    return string(j)
 }
