@@ -2,7 +2,7 @@ package main
 
 import (
     "encoding/json"
-    "strings"
+//    "strings"
 )
 
 func GetRedis(path string) (r string) {
@@ -26,13 +26,6 @@ func DelRedis(path string) (string) {
 }
 
 func GlobRedis(path string) (items []string) {
-    r,_ := myRedis.Keys(path).Result()
-    for _,item := range r {
-        items = append(items, GetRedis(item))
-    }
+    items,_ = myRedis.Keys(path).Result()
     return
-}
-
-func GlobRedisJSON(path string) (string) {
-    return "[" + strings.Join(GlobRedis(path), ",") + "]"
 }

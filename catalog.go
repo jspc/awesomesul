@@ -7,7 +7,7 @@ import (
 //    "regexp"
 )
 
-type Catalog struct {
+type CatalogRegister struct {
     Datacenter string
     Node string
     Address string
@@ -27,6 +27,13 @@ type Catalog struct {
         Status string
         ServiceID string
     }
+}
+
+type CatalogDeregister struct {
+    Datacenter string
+    Node string
+    ServiceID string
+    CheckID string
 }
 
 type Node struct {
@@ -54,7 +61,7 @@ func nodeRoute(method string, path string, body string) (output string) {
 }
 
 func register(path string, body string) (string) {
-    var catalog Catalog
+    var catalog CatalogRegister
 
     err := json.Unmarshal([]byte(body), &catalog)
     if err != nil {
@@ -83,9 +90,36 @@ func register(path string, body string) (string) {
     return "true"
 }
 
+func deregister(path string, body string) (string) {
+    var catalog CatalogDeregister
+
+    err := json.Unmarshal([]byte(body), &catalog)
+    if err != nil {
+        log.Println("error: ", err)
+    }
+
+    nodePath := "/catalog/"+catalog.Node
+
+    if len(catalog.ServiceID) > 0 {
+        DelRedis(nodePath+"/"+catalog.ServiceID)
+    } else if len(catalog.CheckID) > 0 {
+        // We don't do anything with checks yet
+    } else {
+        DelRedis(nodePath)
+        for _,item := range GlobRedis(nodePath+"/*") {
+            DelRedis(item)
+        }
+    }
+
+    return "true"
+}
+
 func CatalogRoutes(method string, path string, body string) (output string) {
-    if path == "register" {
+    switch path {
+    case "register":
         output = register(path, body)
+    case "deregister":
+        output = deregister(path, body)
     }
     return
 }
