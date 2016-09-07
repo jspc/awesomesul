@@ -1,6 +1,7 @@
 package main
 
 import (
+    "encoding/base64"
     "encoding/json"
 )
 
@@ -26,7 +27,8 @@ func KV(method string, path string, body string) (string){
     case "GET":
         o.Value = GetRedis(path)
     case "PUT":
-        return PutRedis(path, body)
+        encBody := base64.StdEncoding.EncodeToString([]byte(body))
+        return PutRedis(path, encBody)
     case "DELETE":
         return DelRedis(path)
     }

@@ -1,7 +1,8 @@
 package main
 
 import (
-    "encoding/base64"
+    "encoding/json"
+//    "strings"
 )
 
 func GetRedis(path string) (r string) {
@@ -10,12 +11,21 @@ func GetRedis(path string) (r string) {
 }
 
 func PutRedis(path string, value string) (string) {
-    encValue := base64.StdEncoding.EncodeToString([]byte(value))
-    myRedis.Set(path, encValue, 0).Result()
+    myRedis.Set(path, value, 0).Result()
     return "true"
+}
+
+func PutRedisObj(path string, o interface{}) (string) {
+    j,_ := json.Marshal(o)
+    return PutRedis(path, string(j))
 }
 
 func DelRedis(path string) (string) {
     myRedis.Del(path).Result()
     return "true"
+}
+
+func GlobRedis(path string) (items []string) {
+    items,_ = myRedis.Keys(path).Result()
+    return
 }

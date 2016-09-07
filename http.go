@@ -29,7 +29,11 @@ func normalisePath(path string) (n NormalisedPath){
     splitPath := strings.SplitAfterN(cleanPath, "/", 2)
 
     n.Service = strings.Replace(splitPath[0], "/", "", 1)
-    n.Path = splitPath[1]
+
+    if len(splitPath) > 1 {
+        n.Path = splitPath[1]
+    }
+
     return
 }
 
@@ -62,6 +66,8 @@ func router(w http.ResponseWriter, r *http.Request){
     switch normalisedPath.Service {
     case "kv":
         resp = KV(r.Method, normalisedPath.Path, normalisedBody)
+    case "catalog":
+        resp = CatalogRoutes(r.Method, normalisedPath.Path, normalisedBody)
     }
 
     w = setHeaders(w)
