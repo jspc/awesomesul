@@ -39,6 +39,18 @@ Usage of ./awesomesul:
         Redis password, should one exist
 ```
 
+Docker
+--
+
+For example: connecting to a containerised redis
+
+```bash
+$ docker run -d --name redis1 redis
+41eac13463c6e1518c001133f1468b5265394da1d45c5c40f9be61641c91ef22
+$ docker run --link redis1:redis -ti quay.io/financialtimes/awesomesul:latest -redis_address=redis:6379
+2016/09/07 15:37:00 %T Redis<redis:6379 db:0>
+2016/09/07 15:37:00 PONG
+```
 
 Licence
 --
