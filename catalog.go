@@ -1,7 +1,6 @@
 package main
 
 import (
-//    "strings"
     "encoding/json"
     "log"
 //    "regexp"
@@ -34,49 +33,6 @@ type CatalogDeregister struct {
     Node string
     ServiceID string
     CheckID string
-}
-
-type Node struct {
-    Node string
-    Address string
-    TaggedAddresses map[string]string
-}
-
-type Service struct {
-    Node string
-    Address string
-    ServiceID string
-    ServiceName string
-    ServiceTags []string
-    ServiceAddress string
-    ServicePort int
-}
-
-
-// FIXME: This, and the func below, are a crap way of doing this
-func unmarshalService(j string) (s Service) {
-    err := json.Unmarshal([]byte(j), &s)
-    if err != nil {
-        log.Println("error: ", err)
-    }
-    return s
-}
-
-func services(path string, body string) (output string) {
-    serviceList := make(map[string][]string)
-
-    for _,key := range GlobRedis("/catalog/*/*") {
-        servObj := unmarshalService( GetRedis(key) )
-        serviceList[servObj.ServiceName] = servObj.ServiceTags
-    }
-
-    outputBytes,_ := json.Marshal(serviceList)
-    output = string(outputBytes)
-    return
-}
-
-func nodeRoute(method string, path string, body string) (output string) {
-    return
 }
 
 func register(path string, body string) (string) {
@@ -141,6 +97,8 @@ func CatalogRoutes(method string, path string, body string) (output string) {
         output = deregister(path, body)
     case "services":
         output = services(path, body)
+    case "nodes":
+        output = nodes(path, body)
     }
     return
 }
