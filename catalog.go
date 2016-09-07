@@ -52,7 +52,26 @@ type Service struct {
     ServicePort int
 }
 
-func serviceRoute(method string, path string, body string) (output string) {
+
+// FIXME: This, and the func below, are a crap way of doing this
+func unmarshalService(j string) (s Service) {
+    err := json.Unmarshal([]byte(j), &s)
+    if err != nil {
+        log.Println("error: ", err)
+    }
+    return s
+}
+
+func services(path string, body string) (output string) {
+    serviceList := make(map[string][]string)
+
+    for _,key := range GlobRedis("/catalog/*/*") {
+        servObj := unmarshalService( GetRedis(key) )
+        serviceList[servObj.ServiceName] = servObj.ServiceTags
+    }
+
+    outputBytes,_ := json.Marshal(serviceList)
+    output = string(outputBytes)
     return
 }
 
@@ -120,6 +139,8 @@ func CatalogRoutes(method string, path string, body string) (output string) {
         output = register(path, body)
     case "deregister":
         output = deregister(path, body)
+    case "services":
+        output = services(path, body)
     }
     return
 }
