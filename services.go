@@ -13,6 +13,9 @@ type Service struct {
     ServiceTags []string
     ServiceAddress string
     ServicePort int
+    ServiceEnableTagOverride bool
+    CreateIndex int
+    ModifyIndex int
 }
 
 
@@ -31,6 +34,19 @@ func services(path string, body string) (output string) {
     for _,key := range GlobRedis("/catalog/*/*") {
         servObj := unmarshalService( GetRedis(key) )
         serviceList[servObj.ServiceName] = servObj.ServiceTags
+    }
+
+    outputBytes,_ := json.Marshal(serviceList)
+    output = string(outputBytes)
+    return
+}
+
+func service(serviceName string) (output string) {
+    var serviceList []Service
+
+    for _,key := range GlobRedis("/catalog/*/"+serviceName) {
+        servObj := unmarshalService( GetRedis(key) )
+        serviceList = append(serviceList, servObj)
     }
 
     outputBytes,_ := json.Marshal(serviceList)
