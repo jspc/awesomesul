@@ -2,7 +2,7 @@ package main
 
 import (
     "encoding/json"
-//    "strings"
+    "log"
 )
 
 func GetRedis(path string) (r string) {
@@ -11,12 +11,20 @@ func GetRedis(path string) (r string) {
 }
 
 func PutRedis(path string, value string) (string) {
-    myRedis.Set(path, value, 0).Result()
+    _,err := myRedis.Set(path, value, 0).Result()
+    if  err != nil {
+        log.Println(err)
+    }
+
     return "true"
 }
 
 func PutRedisObj(path string, o interface{}) (string) {
-    j,_ := json.Marshal(o)
+    j,err := json.Marshal(o)
+    if  err != nil {
+        log.Println(err)
+    }
+
     return PutRedis(path, string(j))
 }
 
