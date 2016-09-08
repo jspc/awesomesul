@@ -70,6 +70,8 @@ func router(w http.ResponseWriter, r *http.Request){
         resp = CatalogRoutes(r.Method, normalisedPath.Path, normalisedBody)
     case "agent":
         resp = Agent(normalisedPath.Path, normalisedBody)
+    case "health":
+        resp = Health(normalisedPath.Path)
     }
 
     w = setHeaders(w)

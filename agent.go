@@ -112,6 +112,8 @@ func Agent(path string, body string) (r string) {
         r = agentListChecks()
     case path == "services":
         r = agentListServices()
+    case strings.HasPrefix(path, "check/pass"):
+        r = "true"
     }
 
     return
