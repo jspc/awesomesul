@@ -84,12 +84,6 @@ func agentDeRegisterService(path string) (string) {
     return "true"
 }
 
-func agentListChecks() (string) {
-    // We're not doing any thing  with serf/ checks.
-    // c'est la vie
-    return "{}"
-}
-
 func agentListServices() (string) {
     var services = make(map[string]AgentService)
 
@@ -108,11 +102,9 @@ func Agent(path string, body string) (r string) {
         r = agentRegisterService(body)
     case strings.HasPrefix(path, "service/deregister"):
         r = agentDeRegisterService(path)
-    case path == "checks":
-        r = agentListChecks()
     case path == "services":
         r = agentListServices()
-    case strings.HasPrefix(path, "check/pass"):
+    case strings.HasPrefix(path, "check"):
         r = "true"
     }
 

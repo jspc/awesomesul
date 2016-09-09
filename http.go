@@ -51,10 +51,11 @@ func setHeaders(w http.ResponseWriter)(wDup http.ResponseWriter){
 }
 
 func logRequest(r *http.Request) {
-    log.Printf( "%s :: %s %s",
+    log.Printf( "%s :: %s %s\n%s\n",
         r.RemoteAddr,
         r.Method,
-        r.URL.Path)
+        r.URL.Path,
+        rwToString(r.Body))
 }
 
 func router(w http.ResponseWriter, r *http.Request){
@@ -69,9 +70,12 @@ func router(w http.ResponseWriter, r *http.Request){
     case "catalog":
         resp = CatalogRoutes(r.Method, normalisedPath.Path, normalisedBody)
     case "agent":
-        resp = Agent(normalisedPath.Path, normalisedBody)
-    case "health":
-        resp = Health(normalisedPath.Path)
+        switch {
+        case strings.HasPrefix(normalisedPath.Path, "service"):
+            resp = Agent(normalisedPath.Path, normalisedBody)
+        case strings.HasPrefix(normalisedPath.Path, "check"):
+            resp = HealthChecks(r.Method, normalisedPath.Path, normalisedBody)
+        }
     }
 
     w = setHeaders(w)
